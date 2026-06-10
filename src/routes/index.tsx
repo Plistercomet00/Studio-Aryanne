@@ -39,7 +39,8 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const WHATSAPP_URL = "https://wa.me/5581999999999";
+const WHATSAPP_URL = "https://wa.me/5581985605529";
+const INSTAGRAM_URL = "https://www.instagram.com/studio.aryanne/";
 
 // ---------------------------------------------------------------------------
 // Hook: scroll reveal com stagger opcional
@@ -690,7 +691,7 @@ function Footer() {
         <div>
           <h4 className="font-display text-lg text-white">Siga o Studio</h4>
           <a
-            href="https://instagram.com"
+            href={INSTAGRAM_URL}
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex h-10 w-10 items-center justify-center rounded-full
