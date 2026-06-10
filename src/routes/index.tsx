@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   Leaf,
   Sparkles,
@@ -41,6 +41,72 @@ export const Route = createFileRoute("/")({
 
 const WHATSAPP_URL = "https://wa.me/5581999999999";
 
+// ---------------------------------------------------------------------------
+// Hook: scroll reveal com stagger opcional
+// ---------------------------------------------------------------------------
+function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>, boolean] {
+  const ref = useRef<T>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [stagger]);
+
+  return [ref, visible];
+}
+
+// Hook para contador animado
+function useCounter(target: number, visible: boolean, duration = 1200) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!visible) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setCount(target);
+      return;
+    }
+    let start: number | null = null;
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+      setCount(Math.floor(ease * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [visible, target, duration]);
+  return count;
+}
+
+// ---------------------------------------------------------------------------
+// Estilos de transição reutilizáveis
+// ---------------------------------------------------------------------------
+const fadeUp = "transition-all duration-700 ease-out";
+const hidden = "opacity-0 translate-y-8";
+const shown = "opacity-100 translate-y-0";
+
+// ---------------------------------------------------------------------------
+// Navbar
+// ---------------------------------------------------------------------------
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -48,7 +114,7 @@ function Navbar() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -67,9 +133,7 @@ function Navbar() {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
         <a href="#" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl text-gold tracking-wide">
-            Aryanne Medeiros
-          </span>
+          <span className="font-display text-2xl text-gold tracking-wide">Aryanne Medeiros</span>
           <span className="text-xs tracking-[0.2em] text-gold/80 uppercase">Beauty</span>
         </a>
 
@@ -78,7 +142,9 @@ function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="text-sm tracking-wide text-foreground/80 transition-colors hover:text-primary"
+                className="relative text-sm tracking-wide text-foreground/80 transition-colors hover:text-primary
+                  after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold
+                  after:transition-all after:duration-300 hover:after:w-full"
               >
                 {l.label}
               </a>
@@ -90,16 +156,13 @@ function Navbar() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noreferrer"
-          className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary-dark md:inline-block"
+          className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground
+            transition-all duration-300 hover:bg-primary-dark hover:scale-[1.03] md:inline-block"
         >
           Agendar
         </a>
 
-        <button
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Menu"
-          className="md:hidden"
-        >
+        <button onClick={() => setOpen((v) => !v)} aria-label="Menu" className="md:hidden">
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </nav>
@@ -112,7 +175,7 @@ function Navbar() {
                 <a
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block py-3 text-foreground/80"
+                  className="block py-3 text-foreground/80 hover:text-primary transition-colors"
                 >
                   {l.label}
                 </a>
@@ -135,28 +198,49 @@ function Navbar() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Hero — parallax suave na imagem ao rolar
+// ---------------------------------------------------------------------------
 function Hero() {
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    const onScroll = () => {
+      if (!imgRef.current) return;
+      const y = window.scrollY;
+      imgRef.current.style.transform = `translateY(${y * 0.08}px)`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-sage-light pt-32 pb-20 lg:pt-44 lg:pb-32">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-2 lg:gap-20 lg:px-10">
+        {/* Texto */}
         <div className="reveal">
           <div className="flex items-center gap-4">
             <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary-dark">
               Studio Aryanne Medeiros
             </span>
           </div>
-          <div className="mt-3 h-px w-24 bg-gold" />
+          {/* Linha dourada animada */}
+          <div
+            className="mt-3 h-px bg-gold origin-left transition-all duration-700 delay-300"
+            style={{ width: "6rem" }}
+          />
 
           <h1 className="mt-8 font-display text-5xl leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             Realce a sua
             <br />
-            beleza{" "}
-            <em className="font-display italic text-primary-dark">natural.</em>
+            beleza <em className="font-display italic text-primary-dark">natural.</em>
           </h1>
 
           <p className="mt-8 max-w-md text-base leading-relaxed text-muted-foreground">
-            Design de sobrancelhas e estética facial em Recife, com técnicas
-            exclusivas pensadas para cada rosto.
+            Design de sobrancelhas e estética facial em Recife, com técnicas exclusivas pensadas para cada rosto.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-6">
@@ -164,7 +248,8 @@ function Hero() {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-primary px-8 py-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary-dark hover:shadow-md"
+              className="rounded-full bg-primary px-8 py-3.5 text-sm font-medium text-primary-foreground
+                shadow-sm transition-all duration-300 hover:bg-primary-dark hover:shadow-md hover:scale-[1.03]"
             >
               Agendar agora
             </a>
@@ -173,25 +258,25 @@ function Hero() {
               className="group inline-flex items-center gap-2 text-sm font-medium tracking-wide text-foreground"
             >
               Ver serviços
-              <ArrowRight
-                size={16}
-                className="transition-transform group-hover:translate-x-1"
-              />
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1.5" />
             </a>
           </div>
         </div>
 
+        {/* Imagem com parallax */}
         <div className="reveal relative" style={{ animationDelay: "120ms" }}>
           <div className="relative overflow-hidden rounded-[2.5rem] shadow-xl">
-            <img
-              src={heroBrows}
-              alt="Design de sobrancelhas natural"
-              width={1024}
-              height={1280}
-              className="h-full w-full object-cover"
-            />
+            <div ref={imgRef} className="will-change-transform">
+              <img
+                src={heroBrows}
+                alt="Design de sobrancelhas natural"
+                width={1024}
+                height={1280}
+                className="h-full w-full object-cover scale-[1.06]"
+              />
+            </div>
           </div>
-          <div className="absolute -bottom-6 -left-6 hidden h-32 w-32 rounded-full border border-gold/40 sm:block" />
+          <div className="absolute -bottom-6 -left-6 hidden h-32 w-32 rounded-full border border-gold/40 sm:block animate-[spin_18s_linear_infinite]" />
           <div className="absolute -top-4 -right-4 hidden h-20 w-20 rounded-full bg-gold/20 sm:block" />
         </div>
       </div>
@@ -199,32 +284,75 @@ function Hero() {
   );
 }
 
-function Credibility() {
-  const items = [
-    { icon: Leaf, value: "500+", label: "clientes atendidas" },
-    { icon: Sparkles, value: "5 anos", label: "de experiência" },
-    { icon: Star, value: "5 estrelas", label: "de avaliação" },
-  ];
+// ---------------------------------------------------------------------------
+// Credibilidade — contadores animados
+// ---------------------------------------------------------------------------
+function StatItem({
+  icon: Icon,
+  target,
+  suffix,
+  label,
+  parentVisible,
+  delay,
+}: {
+  icon: React.ElementType;
+  target: number;
+  suffix: string;
+  label: string;
+  parentVisible: boolean;
+  delay: number;
+}) {
+  const [localVisible, setLocalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!parentVisible) return;
+    const t = setTimeout(() => setLocalVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [parentVisible, delay]);
+
+  const count = useCounter(target, localVisible);
+
   return (
-    <section className="border-y border-border bg-background py-12">
+    <div className={`flex items-center justify-center gap-4 ${fadeUp} ${localVisible ? shown : hidden}`}>
+      <Icon size={24} className="text-primary" strokeWidth={1.5} />
+      <div className="text-left">
+        <div className="font-display text-2xl text-foreground">
+          {count}
+          {suffix}
+        </div>
+        <div className="text-xs tracking-wide text-muted-foreground">{label}</div>
+      </div>
+    </div>
+  );
+}
+
+function Credibility() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
+  return (
+    <section ref={ref} className="border-y border-border bg-background py-12">
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 sm:grid-cols-3 lg:px-10">
-        {items.map((it) => (
-          <div key={it.label} className="flex items-center justify-center gap-4">
-            <it.icon size={24} className="text-primary" strokeWidth={1.5} />
-            <div className="text-left">
-              <div className="font-display text-2xl text-foreground">{it.value}</div>
-              <div className="text-xs tracking-wide text-muted-foreground">
-                {it.label}
-              </div>
-            </div>
-          </div>
-        ))}
+        <StatItem icon={Leaf} target={500} suffix="+" label="clientes atendidas" parentVisible={visible} delay={0} />
+        <StatItem
+          icon={Sparkles}
+          target={5}
+          suffix=" anos"
+          label="de experiência"
+          parentVisible={visible}
+          delay={150}
+        />
+        <StatItem icon={Star} target={5} suffix=" estrelas" label="de avaliação" parentVisible={visible} delay={300} />
       </div>
     </section>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Serviços — cards com stagger e micro-interação no ícone
+// ---------------------------------------------------------------------------
 function Services() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
   const services = [
     {
       icon: Leaf,
@@ -254,34 +382,43 @@ function Services() {
   ];
 
   return (
-    <section id="servicos" className="py-24 lg:py-32">
+    <section id="servicos" ref={ref} className="py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-            O que oferecemos
-          </span>
+        {/* Cabeçalho */}
+        <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
+          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">O que oferecemos</span>
           <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
             Nossos <em className="italic text-primary-dark">Serviços</em>
           </h2>
           <p className="mt-5 text-base text-muted-foreground">
             Técnicas exclusivas pensadas para o seu tipo de rosto e estilo.
           </p>
-          <div className="mx-auto mt-6 h-px w-16 bg-gold" />
+          <div
+            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
+          />
         </div>
 
+        {/* Grid com stagger */}
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((s) => (
+          {services.map((s, i) => (
             <article
               key={s.title}
-              className="group rounded-2xl border border-border bg-background p-8 transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-lg"
+              className={`group rounded-2xl border border-border bg-background p-8
+                transition-all duration-500 hover:-translate-y-1.5 hover:border-gold hover:shadow-lg
+                ${fadeUp} ${visible ? shown : hidden}`}
+              style={{ transitionDelay: visible ? `${i * 80}ms` : "0ms" }}
             >
-              <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full bg-sage-light text-primary transition-colors group-hover:bg-gold/15 group-hover:text-gold">
+              <div
+                className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full
+                  bg-sage-light text-primary transition-all duration-300
+                  group-hover:bg-gold/15 group-hover:text-gold group-hover:-translate-y-1"
+              >
                 <s.icon size={22} strokeWidth={1.5} />
               </div>
               <h3 className="font-display text-2xl text-foreground">{s.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {s.desc}
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+              {/* Linha dourada no rodapé do card, expande no hover */}
+              <div className="mt-6 h-px w-0 bg-gold transition-all duration-500 group-hover:w-12" />
             </article>
           ))}
         </div>
@@ -290,11 +427,17 @@ function Services() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Sobre
+// ---------------------------------------------------------------------------
 function About() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
   return (
-    <section id="sobre" className="bg-sage-light py-24 lg:py-32">
+    <section id="sobre" ref={ref} className="bg-sage-light py-24 lg:py-32">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[5fr_6fr] lg:gap-20 lg:px-10">
-        <div className="relative">
+        {/* Imagem */}
+        <div className={`relative ${fadeUp} ${visible ? shown : hidden}`} style={{ transitionDelay: "100ms" }}>
           <div className="overflow-hidden rounded-[2rem] shadow-xl">
             <img
               src={aryannePortrait}
@@ -302,42 +445,45 @@ function About() {
               width={900}
               height={1100}
               loading="lazy"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
             />
           </div>
-          <span className="absolute -bottom-8 -right-4 font-script text-7xl text-gold sm:-right-6 sm:text-8xl">
+          <span
+            className={`absolute -bottom-8 -right-4 font-script text-7xl text-gold
+              sm:-right-6 sm:text-8xl transition-all duration-700 delay-500
+              ${visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`}
+          >
             Am
           </span>
         </div>
 
-        <div>
+        {/* Texto */}
+        <div className={`${fadeUp} ${visible ? shown : hidden}`} style={{ transitionDelay: "250ms" }}>
           <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary-dark">
             Sobre a profissional
           </span>
-          <div className="mt-3 h-px w-20 bg-gold" />
+          <div className={`mt-3 h-px bg-gold transition-all duration-700 delay-500 ${visible ? "w-20" : "w-0"}`} />
           <h2 className="mt-6 font-display text-4xl text-foreground sm:text-5xl">
-            Beleza é{" "}
-            <em className="italic text-primary-dark">autoestima.</em>
+            Beleza é <em className="italic text-primary-dark">autoestima.</em>
           </h2>
           <p className="mt-6 text-base leading-relaxed text-foreground/80">
-            Aryanne Medeiros é designer de sobrancelhas especializada em
-            técnicas de embelezamento natural. Com anos de experiência e
-            centenas de clientes transformadas, seu trabalho é marcado pela
-            precisão, cuidado com cada detalhe e respeito pela beleza única
-            de cada pessoa.
+            Aryanne Medeiros é designer de sobrancelhas especializada em técnicas de embelezamento natural. Com anos de
+            experiência e centenas de clientes transformadas, seu trabalho é marcado pela precisão, cuidado com cada
+            detalhe e respeito pela beleza única de cada pessoa.
           </p>
           <p className="mt-4 text-base leading-relaxed text-foreground/80">
-            Cada atendimento é pensado de forma individual — porque não
-            existe uma única forma de ser bonita.
+            Cada atendimento é pensado de forma individual — porque não existe uma única forma de ser bonita.
           </p>
           <a
             href={WHATSAPP_URL}
             target="_blank"
             rel="noreferrer"
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary-dark"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3
+              text-sm font-medium text-primary-foreground transition-all duration-300
+              hover:bg-primary-dark hover:scale-[1.03]"
           >
             Conheça o studio
-            <ArrowRight size={16} />
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>
       </div>
@@ -345,33 +491,39 @@ function About() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Portfólio
+// ---------------------------------------------------------------------------
 function Portfolio() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
   const items = [
     { img: portfolio1, tag: "Nature Brows" },
     { img: portfolio2, tag: "Lash Lifting" },
     { img: portfolio3, tag: "Brow Lamination" },
   ];
+
   return (
-    <section id="portfolio" className="py-24 lg:py-32">
+    <section id="portfolio" ref={ref} className="py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-            Portfólio
-          </span>
+        <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
+          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">Portfólio</span>
           <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
             Transformações <em className="italic text-primary-dark">Reais</em>
           </h2>
-          <p className="mt-5 text-base text-muted-foreground">
-            Resultados que falam por si.
-          </p>
-          <div className="mx-auto mt-6 h-px w-16 bg-gold" />
+          <p className="mt-5 text-base text-muted-foreground">Resultados que falam por si.</p>
+          <div
+            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
+          />
         </div>
 
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
             <figure
               key={i}
-              className="group overflow-hidden rounded-2xl border border-border bg-background"
+              className={`group overflow-hidden rounded-2xl border border-border bg-background
+                ${fadeUp} ${visible ? shown : hidden}`}
+              style={{ transitionDelay: visible ? `${i * 100}ms` : "0ms" }}
             >
               <div className="grid grid-cols-2">
                 <div className="relative aspect-square overflow-hidden bg-border">
@@ -403,9 +555,7 @@ function Portfolio() {
               </div>
               <figcaption className="flex items-center justify-between px-5 py-4">
                 <span className="font-display text-lg text-foreground">{it.tag}</span>
-                <span className="text-xs uppercase tracking-wider text-gold">
-                  Resultado
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gold">Resultado</span>
               </figcaption>
             </figure>
           ))}
@@ -415,7 +565,12 @@ function Portfolio() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Depoimentos
+// ---------------------------------------------------------------------------
 function Testimonials() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
   const items = [
     {
       text: "Finalmente encontrei alguém que entendeu o meu rosto. A Aryanne transformou minhas sobrancelhas completamente!",
@@ -430,37 +585,36 @@ function Testimonials() {
       name: "Fernanda L.",
     },
   ];
+
   return (
-    <section className="bg-primary py-24 text-primary-foreground lg:py-32">
+    <section ref={ref} className="bg-primary py-24 text-primary-foreground lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-gold">
-            Depoimentos
-          </span>
+        <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
+          <span className="text-xs font-medium uppercase tracking-[0.28em] text-gold">Depoimentos</span>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl">
-            O que dizem nossas{" "}
-            <em className="italic">clientes</em>
+            O que dizem nossas <em className="italic">clientes</em>
           </h2>
-          <div className="mx-auto mt-6 h-px w-16 bg-gold" />
+          <div
+            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
+          />
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {items.map((t) => (
+          {items.map((t, i) => (
             <blockquote
               key={t.name}
-              className="rounded-2xl border border-white/15 bg-white/[0.08] p-8 backdrop-blur-sm"
+              className={`rounded-2xl border border-white/15 bg-white/[0.08] p-8
+                backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.13] hover:-translate-y-1
+                ${fadeUp} ${visible ? shown : hidden}`}
+              style={{ transitionDelay: visible ? `${i * 120}ms` : "0ms" }}
             >
               <div className="flex gap-1 text-gold">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
+                {[...Array(5)].map((_, j) => (
+                  <Star key={j} size={14} fill="currentColor" strokeWidth={0} />
                 ))}
               </div>
-              <p className="mt-5 font-display text-xl italic leading-relaxed">
-                "{t.text}"
-              </p>
-              <footer className="mt-6 text-sm font-semibold tracking-wide">
-                — {t.name}
-              </footer>
+              <p className="mt-5 font-display text-xl italic leading-relaxed">"{t.text}"</p>
+              <footer className="mt-6 text-sm font-semibold tracking-wide">— {t.name}</footer>
             </blockquote>
           ))}
         </div>
@@ -469,13 +623,17 @@ function Testimonials() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// CTA Final
+// ---------------------------------------------------------------------------
 function FinalCTA() {
+  const [ref, visible] = useReveal<HTMLElement>();
+
   return (
-    <section id="contato" className="bg-sage-light py-24 lg:py-32">
-      <div className="mx-auto max-w-3xl px-6 text-center lg:px-10">
+    <section id="contato" ref={ref} className="bg-sage-light py-24 lg:py-32">
+      <div className={`mx-auto max-w-3xl px-6 text-center lg:px-10 ${fadeUp} ${visible ? shown : hidden}`}>
         <h2 className="font-display text-4xl text-foreground sm:text-5xl lg:text-6xl">
-          Pronta para se{" "}
-          <em className="italic text-primary-dark">transformar?</em>
+          Pronta para se <em className="italic text-primary-dark">transformar?</em>
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">
           Agende sua visita e descubra o que podemos fazer pela sua beleza.
@@ -484,7 +642,9 @@ function FinalCTA() {
           href={WHATSAPP_URL}
           target="_blank"
           rel="noreferrer"
-          className="mt-10 inline-flex items-center gap-3 rounded-full bg-primary px-9 py-4 text-base font-medium text-primary-foreground shadow-md transition-all hover:bg-primary-dark hover:shadow-lg"
+          className="mt-10 inline-flex items-center gap-3 rounded-full bg-primary px-9 py-4
+            text-base font-medium text-primary-foreground shadow-md
+            transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:scale-[1.04]"
         >
           <MessageCircle size={18} />
           Agendar pelo WhatsApp
@@ -497,6 +657,9 @@ function FinalCTA() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Footer
+// ---------------------------------------------------------------------------
 function Footer() {
   return (
     <footer className="bg-[#2C2A28] py-14 text-white/70">
@@ -504,9 +667,7 @@ function Footer() {
         <div>
           <div className="flex items-baseline gap-2">
             <span className="font-display text-2xl text-gold">Aryanne Medeiros</span>
-            <span className="text-xs uppercase tracking-[0.2em] text-gold/80">
-              Beauty
-            </span>
+            <span className="text-xs uppercase tracking-[0.2em] text-gold/80">Beauty</span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
             Studio de design de sobrancelhas e estética facial em Recife.
@@ -516,10 +677,13 @@ function Footer() {
         <div>
           <h4 className="font-display text-lg text-white">Navegação</h4>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><a href="#servicos" className="hover:text-gold">Serviços</a></li>
-            <li><a href="#sobre" className="hover:text-gold">Sobre</a></li>
-            <li><a href="#portfolio" className="hover:text-gold">Portfólio</a></li>
-            <li><a href="#contato" className="hover:text-gold">Contato</a></li>
+            {["#servicos", "#sobre", "#portfolio", "#contato"].map((href, i) => (
+              <li key={href}>
+                <a href={href} className="transition-colors hover:text-gold">
+                  {["Serviços", "Sobre", "Portfólio", "Contato"][i]}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -529,7 +693,9 @@ function Footer() {
             href="https://instagram.com"
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/80 transition-colors hover:border-gold hover:text-gold"
+            className="mt-4 inline-flex h-10 w-10 items-center justify-center rounded-full
+              border border-white/20 text-white/80 transition-all duration-300
+              hover:border-gold hover:text-gold hover:scale-110"
             aria-label="Instagram"
           >
             <Instagram size={18} />
@@ -544,6 +710,9 @@ function Footer() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
 function Index() {
   return (
     <main className="min-h-screen bg-background text-foreground">
