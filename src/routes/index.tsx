@@ -48,7 +48,9 @@ const INSTAGRAM_URL = "https://www.instagram.com/studio.aryanne/";
 // ---------------------------------------------------------------------------
 // Hook: scroll reveal com stagger opcional
 // ---------------------------------------------------------------------------
-function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>, boolean] {
+function useReveal<T extends HTMLElement>(
+  stagger = false
+): [React.RefObject<T>, boolean] {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
@@ -56,7 +58,8 @@ function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>,
     const el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       setVisible(true);
       return;
@@ -69,7 +72,7 @@ function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>,
           observer.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -83,7 +86,8 @@ function useCounter(target: number, visible: boolean, duration = 1200) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!visible) return;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       setCount(target);
       return;
@@ -104,7 +108,8 @@ function useCounter(target: number, visible: boolean, duration = 1200) {
 // ---------------------------------------------------------------------------
 // Estilos de transição reutilizáveis
 // ---------------------------------------------------------------------------
-const fadeUp = "transition-all duration-700 ease-out";
+const fadeUp =
+  "transition-all duration-700 ease-out";
 const hidden = "opacity-0 translate-y-8";
 const shown = "opacity-100 translate-y-0";
 
@@ -137,7 +142,9 @@ function Navbar() {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
         <a href="#" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl text-gold tracking-wide">Aryanne Medeiros</span>
+          <span className="font-display text-2xl text-gold tracking-wide">
+            Aryanne Medeiros
+          </span>
           <span className="text-xs tracking-[0.2em] text-gold/80 uppercase">Beauty</span>
         </a>
 
@@ -166,7 +173,11 @@ function Navbar() {
           Agendar
         </a>
 
-        <button onClick={() => setOpen((v) => !v)} aria-label="Menu" className="md:hidden">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Menu"
+          className="md:hidden"
+        >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </nav>
@@ -209,7 +220,8 @@ function Hero() {
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
     const onScroll = () => {
@@ -240,11 +252,13 @@ function Hero() {
           <h1 className="mt-8 font-display text-5xl leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             Realce a sua
             <br />
-            beleza <em className="font-display italic text-primary-dark">natural.</em>
+            beleza{" "}
+            <em className="font-display italic text-primary-dark">natural.</em>
           </h1>
 
           <p className="mt-8 max-w-md text-base leading-relaxed text-muted-foreground">
-            Design de sobrancelhas e estética facial em Recife, com técnicas exclusivas pensadas para cada rosto.
+            Design de sobrancelhas e estética facial em Recife, com técnicas
+            exclusivas pensadas para cada rosto.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-6">
@@ -262,7 +276,10 @@ function Hero() {
               className="group inline-flex items-center gap-2 text-sm font-medium tracking-wide text-foreground"
             >
               Ver serviços
-              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1.5" />
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1.5"
+              />
             </a>
           </div>
         </div>
@@ -317,7 +334,11 @@ function StatItem({
   const count = useCounter(target, localVisible);
 
   return (
-    <div className={`flex items-center justify-center gap-4 ${fadeUp} ${localVisible ? shown : hidden}`}>
+    <div
+      className={`flex items-center justify-center gap-4 ${fadeUp} ${
+        localVisible ? shown : hidden
+      }`}
+    >
       <Icon size={24} className="text-primary" strokeWidth={1.5} />
       <div className="text-left">
         <div className="font-display text-2xl text-foreground">
@@ -336,7 +357,14 @@ function Credibility() {
   return (
     <section ref={ref} className="border-y border-border bg-background py-12">
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 sm:grid-cols-3 lg:px-10">
-        <StatItem icon={Leaf} target={500} suffix="+" label="clientes atendidas" parentVisible={visible} delay={0} />
+        <StatItem
+          icon={Leaf}
+          target={500}
+          suffix="+"
+          label="clientes atendidas"
+          parentVisible={visible}
+          delay={0}
+        />
         <StatItem
           icon={Sparkles}
           target={5}
@@ -345,7 +373,14 @@ function Credibility() {
           parentVisible={visible}
           delay={150}
         />
-        <StatItem icon={Star} target={5} suffix=" estrelas" label="de avaliação" parentVisible={visible} delay={300} />
+        <StatItem
+          icon={Star}
+          target={5}
+          suffix=" estrelas"
+          label="de avaliação"
+          parentVisible={visible}
+          delay={300}
+        />
       </div>
     </section>
   );
@@ -389,8 +424,14 @@ function Services() {
     <section id="servicos" ref={ref} className="py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* Cabeçalho */}
-        <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">O que oferecemos</span>
+        <div
+          className={`mx-auto max-w-2xl text-center ${fadeUp} ${
+            visible ? shown : hidden
+          }`}
+        >
+          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
+            O que oferecemos
+          </span>
           <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
             Nossos <em className="italic text-primary-dark">Serviços</em>
           </h2>
@@ -398,7 +439,9 @@ function Services() {
             Técnicas exclusivas pensadas para o seu tipo de rosto e estilo.
           </p>
           <div
-            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
+            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${
+              visible ? "w-16" : "w-0"
+            }`}
           />
         </div>
 
@@ -420,9 +463,13 @@ function Services() {
                 <s.icon size={22} strokeWidth={1.5} />
               </div>
               <h3 className="font-display text-2xl text-foreground">{s.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {s.desc}
+              </p>
               {/* Linha dourada no rodapé do card, expande no hover */}
-              <div className="mt-6 h-px w-0 bg-gold transition-all duration-500 group-hover:w-12" />
+              <div
+                className="mt-6 h-px w-0 bg-gold transition-all duration-500 group-hover:w-12"
+              />
             </article>
           ))}
         </div>
@@ -441,7 +488,10 @@ function About() {
     <section id="sobre" ref={ref} className="bg-sage-light py-24 lg:py-32">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[5fr_6fr] lg:gap-20 lg:px-10">
         {/* Imagem */}
-        <div className={`relative ${fadeUp} ${visible ? shown : hidden}`} style={{ transitionDelay: "100ms" }}>
+        <div
+          className={`relative ${fadeUp} ${visible ? shown : hidden}`}
+          style={{ transitionDelay: "100ms" }}
+        >
           <div className="overflow-hidden rounded-[2rem] shadow-xl">
             <img
               src={aryannePortrait}
@@ -462,21 +512,32 @@ function About() {
         </div>
 
         {/* Texto */}
-        <div className={`${fadeUp} ${visible ? shown : hidden}`} style={{ transitionDelay: "250ms" }}>
+        <div
+          className={`${fadeUp} ${visible ? shown : hidden}`}
+          style={{ transitionDelay: "250ms" }}
+        >
           <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary-dark">
             Sobre a profissional
           </span>
-          <div className={`mt-3 h-px bg-gold transition-all duration-700 delay-500 ${visible ? "w-20" : "w-0"}`} />
+          <div
+            className={`mt-3 h-px bg-gold transition-all duration-700 delay-500 ${
+              visible ? "w-20" : "w-0"
+            }`}
+          />
           <h2 className="mt-6 font-display text-4xl text-foreground sm:text-5xl">
-            Beleza é <em className="italic text-primary-dark">autoestima.</em>
+            Beleza é{" "}
+            <em className="italic text-primary-dark">autoestima.</em>
           </h2>
           <p className="mt-6 text-base leading-relaxed text-foreground/80">
-            Aryanne Medeiros é designer de sobrancelhas especializada em técnicas de embelezamento natural. Com anos de
-            experiência e centenas de clientes transformadas, seu trabalho é marcado pela precisão, cuidado com cada
-            detalhe e respeito pela beleza única de cada pessoa.
+            Aryanne Medeiros é designer de sobrancelhas especializada em
+            técnicas de embelezamento natural. Com anos de experiência e
+            centenas de clientes transformadas, seu trabalho é marcado pela
+            precisão, cuidado com cada detalhe e respeito pela beleza única
+            de cada pessoa.
           </p>
           <p className="mt-4 text-base leading-relaxed text-foreground/80">
-            Cada atendimento é pensado de forma individual — porque não existe uma única forma de ser bonita.
+            Cada atendimento é pensado de forma individual — porque não
+            existe uma única forma de ser bonita.
           </p>
           <a
             href={WHATSAPP_URL}
@@ -513,7 +574,17 @@ function Portfolio() {
     { img: portfolio5, tag: "Nature Brows" },
   ];
 
-  const PortfolioCard = ({ img, tag, height, index }: { img: string; tag: string; height: number; index: number }) => (
+  const PortfolioCard = ({
+    img,
+    tag,
+    height,
+    index,
+  }: {
+    img: string;
+    tag: string;
+    height: number;
+    index: number;
+  }) => (
     <figure
       className={`group overflow-hidden rounded-2xl border border-border bg-background
         ${fadeUp} ${visible ? shown : hidden}`}
@@ -533,10 +604,7 @@ function Portfolio() {
           depois
         </span>
       </div>
-      <figcaption className="flex items-center justify-between px-5 py-4">
-        <span className="font-display text-lg text-foreground">{tag}</span>
-        <span className="text-xs uppercase tracking-wider text-gold">Resultado</span>
-      </figcaption>
+
     </figure>
   );
 
@@ -550,9 +618,7 @@ function Portfolio() {
             Transformações <em className="italic text-primary-dark">Reais</em>
           </h2>
           <p className="mt-5 text-base text-muted-foreground">Resultados que falam por si.</p>
-          <div
-            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
-          />
+          <div className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`} />
         </div>
 
         {/* Bloco 1 — Verticais */}
@@ -597,13 +663,22 @@ function Testimonials() {
   return (
     <section ref={ref} className="bg-primary py-24 text-primary-foreground lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-gold">Depoimentos</span>
+        <div
+          className={`mx-auto max-w-2xl text-center ${fadeUp} ${
+            visible ? shown : hidden
+          }`}
+        >
+          <span className="text-xs font-medium uppercase tracking-[0.28em] text-gold">
+            Depoimentos
+          </span>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl">
-            O que dizem nossas <em className="italic">clientes</em>
+            O que dizem nossas{" "}
+            <em className="italic">clientes</em>
           </h2>
           <div
-            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`}
+            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${
+              visible ? "w-16" : "w-0"
+            }`}
           />
         </div>
 
@@ -621,8 +696,12 @@ function Testimonials() {
                   <Star key={j} size={14} fill="currentColor" strokeWidth={0} />
                 ))}
               </div>
-              <p className="mt-5 font-display text-xl italic leading-relaxed">"{t.text}"</p>
-              <footer className="mt-6 text-sm font-semibold tracking-wide">— {t.name}</footer>
+              <p className="mt-5 font-display text-xl italic leading-relaxed">
+                "{t.text}"
+              </p>
+              <footer className="mt-6 text-sm font-semibold tracking-wide">
+                — {t.name}
+              </footer>
             </blockquote>
           ))}
         </div>
@@ -639,9 +718,14 @@ function FinalCTA() {
 
   return (
     <section id="contato" ref={ref} className="bg-sage-light py-24 lg:py-32">
-      <div className={`mx-auto max-w-3xl px-6 text-center lg:px-10 ${fadeUp} ${visible ? shown : hidden}`}>
+      <div
+        className={`mx-auto max-w-3xl px-6 text-center lg:px-10 ${fadeUp} ${
+          visible ? shown : hidden
+        }`}
+      >
         <h2 className="font-display text-4xl text-foreground sm:text-5xl lg:text-6xl">
-          Pronta para se <em className="italic text-primary-dark">transformar?</em>
+          Pronta para se{" "}
+          <em className="italic text-primary-dark">transformar?</em>
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">
           Agende sua visita e descubra o que podemos fazer pela sua beleza.
@@ -675,7 +759,9 @@ function Footer() {
         <div>
           <div className="flex items-baseline gap-2">
             <span className="font-display text-2xl text-gold">Aryanne Medeiros</span>
-            <span className="text-xs uppercase tracking-[0.2em] text-gold/80">Beauty</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-gold/80">
+              Beauty
+            </span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
             Studio de design de sobrancelhas e estética facial em Recife.
@@ -687,7 +773,10 @@ function Footer() {
           <ul className="mt-4 space-y-2 text-sm">
             {["#servicos", "#sobre", "#portfolio", "#contato"].map((href, i) => (
               <li key={href}>
-                <a href={href} className="transition-colors hover:text-gold">
+                <a
+                  href={href}
+                  className="transition-colors hover:text-gold"
+                >
                   {["Serviços", "Sobre", "Portfólio", "Contato"][i]}
                 </a>
               </li>
