@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   MapPin,
+  Smile,
 } from "lucide-react";
 import heroBrows from "@/assets/hero-brows.jpg";
 import aryannePortrait from "@/assets/aryanne-portrait.jpg";
@@ -419,6 +420,11 @@ function Services() {
       icon: Droplets,
       title: "Limpeza de Pele",
       desc: "Protocolo facial completo para higienização profunda, controle de oleosidade e renovação da pele — pele limpa e luminosa.",
+    },
+    {
+      icon: Smile,
+      title: "Nature Lips",
+      desc: "Revitalização labial que hidrata profundamente, realça a cor natural e devolve o viço dos lábios. Resultado saudável, uniforme e naturalmente atraente — sem exageros, apenas sua melhor versão.",
     },
   ];
 
