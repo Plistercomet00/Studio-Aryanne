@@ -20,8 +20,8 @@ import portfolio1 from "@/assets/portfolio-before-after-1.png";
 import portfolio2 from "@/assets/portfolio-before-after-2.png";
 import portfolio3 from "@/assets/portfolio-before-after-3.png";
 import portfolio4 from "@/assets/portfolio-before-after-4.png";
-import portfolio5 from "@/assets/portfolio-before-after-5.jpg";
-import portfolio6 from "@/assets/portfolio-before-after-6.jpg";
+import portfolio5 from "@/assets/portfolio-before-after-5.jpeg";
+import portfolio6 from "@/assets/portfolio-before-after-6.jpeg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -48,7 +48,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/studio.aryanne/";
 // ---------------------------------------------------------------------------
 // Hook: scroll reveal com stagger opcional
 // ---------------------------------------------------------------------------
-function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T | null>, boolean] {
+function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>, boolean] {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
