@@ -16,9 +16,12 @@ import {
 } from "lucide-react";
 import heroBrows from "@/assets/hero-brows.jpg";
 import aryannePortrait from "@/assets/aryanne-portrait.jpg";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
+import portfolio1 from "@/assets/portfolio-before-after-1.png";
+import portfolio2 from "@/assets/portfolio-before-after-2.png";
+import portfolio3 from "@/assets/portfolio-before-after-3.png";
+import portfolio4 from "@/assets/portfolio-before-after-4.png";
+import portfolio5 from "@/assets/portfolio-before-after-5.jpg";
+import portfolio6 from "@/assets/portfolio-before-after-6.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -499,9 +502,12 @@ function Portfolio() {
   const [ref, visible] = useReveal<HTMLElement>();
 
   const items = [
-    { img: portfolio1, tag: "Nature Brows" },
-    { img: portfolio2, tag: "Lash Lifting" },
-    { img: portfolio3, tag: "Brow Lamination" },
+    { img: portfolio1, tag: "Nature Brows", layout: "vertical" },
+    { img: portfolio2, tag: "Design & Henna", layout: "horizontal" },
+    { img: portfolio3, tag: "Nature Brows", layout: "horizontal" },
+    { img: portfolio4, tag: "Nature Brows", layout: "vertical" },
+    { img: portfolio5, tag: "Nature Brows", layout: "horizontal" },
+    { img: portfolio6, tag: "Naturalidade", layout: "vertical" },
   ];
 
   return (
@@ -526,33 +532,26 @@ function Portfolio() {
                 ${fadeUp} ${visible ? shown : hidden}`}
               style={{ transitionDelay: visible ? `${i * 100}ms` : "0ms" }}
             >
-              <div className="grid grid-cols-2">
-                <div className="relative aspect-square overflow-hidden bg-border">
-                  <img
-                    src={it.img}
-                    alt={`Antes - ${it.tag}`}
-                    width={800}
-                    height={800}
-                    loading="lazy"
-                    className="h-full w-full object-cover grayscale transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute left-3 top-3 rounded-full bg-background/90 px-3 py-1 text-[10px] uppercase tracking-wider text-foreground">
-                    antes
-                  </span>
-                </div>
-                <div className="relative aspect-square overflow-hidden bg-border">
-                  <img
-                    src={it.img}
-                    alt={`Depois - ${it.tag}`}
-                    width={800}
-                    height={800}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute right-3 top-3 rounded-full bg-primary px-3 py-1 text-[10px] uppercase tracking-wider text-primary-foreground">
-                    depois
-                  </span>
-                </div>
+              {/* Imagem inteira — antes/depois já estão na mesma foto */}
+              <div className="relative overflow-hidden bg-border">
+                <img
+                  src={it.img}
+                  alt={`Antes e depois - ${it.tag}`}
+                  loading="lazy"
+                  className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  style={{
+                    aspectRatio: it.layout === "vertical" ? "3/4" : "4/3",
+                    objectPosition: "center top",
+                  }}
+                />
+                {/* Badge antes — canto superior esquerdo */}
+                <span className="absolute left-3 top-3 rounded-full bg-background/85 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-foreground">
+                  antes
+                </span>
+                {/* Badge depois — canto inferior direito */}
+                <span className="absolute bottom-3 right-3 rounded-full bg-primary/90 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-primary-foreground">
+                  depois
+                </span>
               </div>
               <figcaption className="flex items-center justify-between px-5 py-4">
                 <span className="font-display text-lg text-foreground">{it.tag}</span>
