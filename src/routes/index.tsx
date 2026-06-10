@@ -145,10 +145,10 @@ function Navbar() {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
         <a href="#" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl text-gold tracking-wide drop-shadow-sm" style={{ color: "#C8A96E" }}>
+          <span className="font-display text-2xl tracking-wide font-semibold" style={{ color: "#A87C3E" }}>
             Aryanne Medeiros
           </span>
-          <span className="text-xs tracking-[0.2em] uppercase font-medium" style={{ color: "#C8A96E" }}>Beauty</span>
+          <span className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: "#A87C3E" }}>Beauty</span>
         </a>
 
         <ul className="hidden items-center gap-10 md:flex">
@@ -513,7 +513,7 @@ function About() {
           <span
             className={`absolute -bottom-10 -right-4 font-script sm:-right-8 transition-all duration-700 delay-500
               ${visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`}
-            style={{ fontSize: "7rem", color: "#C8A96E", textShadow: "0 2px 12px rgba(200,169,110,0.25)" }}
+            style={{ fontSize: "7rem", color: "#A87C3E", textShadow: "0 2px 16px rgba(168,124,62,0.3)" }}
           >
             Am
           </span>
