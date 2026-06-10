@@ -48,7 +48,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/studio.aryanne/";
 // ---------------------------------------------------------------------------
 // Hook: scroll reveal com stagger opcional
 // ---------------------------------------------------------------------------
-function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T | null>, boolean] {
+function useReveal<T extends HTMLElement>(stagger = false): [React.RefObject<T>, boolean] {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
