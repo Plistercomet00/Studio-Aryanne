@@ -501,18 +501,49 @@ function About() {
 function Portfolio() {
   const [ref, visible] = useReveal<HTMLElement>();
 
-  const items = [
-    { img: portfolio1, tag: "Nature Brows", layout: "vertical" },
-    { img: portfolio2, tag: "Design & Henna", layout: "horizontal" },
-    { img: portfolio3, tag: "Nature Brows", layout: "horizontal" },
-    { img: portfolio4, tag: "Nature Brows", layout: "vertical" },
-    { img: portfolio5, tag: "Nature Brows", layout: "horizontal" },
-    { img: portfolio6, tag: "Naturalidade", layout: "vertical" },
+  const verticals = [
+    { img: portfolio1, tag: "Nature Brows" },
+    { img: portfolio4, tag: "Nature Brows" },
+    { img: portfolio6, tag: "Naturalidade" },
   ];
+
+  const horizontals = [
+    { img: portfolio2, tag: "Design & Henna" },
+    { img: portfolio3, tag: "Nature Brows" },
+    { img: portfolio5, tag: "Nature Brows" },
+  ];
+
+  const PortfolioCard = ({ img, tag, height, index }: { img: string; tag: string; height: number; index: number }) => (
+    <figure
+      className={`group overflow-hidden rounded-2xl border border-border bg-background
+        ${fadeUp} ${visible ? shown : hidden}`}
+      style={{ transitionDelay: visible ? `${index * 100}ms` : "0ms" }}
+    >
+      <div className="relative overflow-hidden" style={{ height: `${height}px` }}>
+        <img
+          src={img}
+          alt={`Antes e depois - ${tag}`}
+          loading="lazy"
+          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-background/85 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-foreground">
+          antes
+        </span>
+        <span className="absolute bottom-3 right-3 rounded-full bg-primary/90 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-primary-foreground">
+          depois
+        </span>
+      </div>
+      <figcaption className="flex items-center justify-between px-5 py-4">
+        <span className="font-display text-lg text-foreground">{tag}</span>
+        <span className="text-xs uppercase tracking-wider text-gold">Resultado</span>
+      </figcaption>
+    </figure>
+  );
 
   return (
     <section id="portfolio" ref={ref} className="py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* Cabeçalho */}
         <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
           <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">Portfólio</span>
           <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
@@ -524,40 +555,17 @@ function Portfolio() {
           />
         </div>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it, i) => (
-            <figure
-              key={i}
-              className={`group overflow-hidden rounded-2xl border border-border bg-background
-                ${fadeUp} ${visible ? shown : hidden}`}
-              style={{ transitionDelay: visible ? `${i * 100}ms` : "0ms" }}
-            >
-              {/* Imagem inteira — antes/depois já estão na mesma foto */}
-              <div className="relative overflow-hidden bg-border">
-                <img
-                  src={it.img}
-                  alt={`Antes e depois - ${it.tag}`}
-                  loading="lazy"
-                  className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  style={{
-                    aspectRatio: it.layout === "vertical" ? "3/4" : "4/3",
-                    objectPosition: "center top",
-                  }}
-                />
-                {/* Badge antes — canto superior esquerdo */}
-                <span className="absolute left-3 top-3 rounded-full bg-background/85 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-foreground">
-                  antes
-                </span>
-                {/* Badge depois — canto inferior direito */}
-                <span className="absolute bottom-3 right-3 rounded-full bg-primary/90 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-wider text-primary-foreground">
-                  depois
-                </span>
-              </div>
-              <figcaption className="flex items-center justify-between px-5 py-4">
-                <span className="font-display text-lg text-foreground">{it.tag}</span>
-                <span className="text-xs uppercase tracking-wider text-gold">Resultado</span>
-              </figcaption>
-            </figure>
+        {/* Bloco 1 — Verticais */}
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {verticals.map((it, i) => (
+            <PortfolioCard key={i} img={it.img} tag={it.tag} height={480} index={i} />
+          ))}
+        </div>
+
+        {/* Bloco 2 — Horizontais */}
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {horizontals.map((it, i) => (
+            <PortfolioCard key={i} img={it.img} tag={it.tag} height={280} index={i + 3} />
           ))}
         </div>
       </div>
