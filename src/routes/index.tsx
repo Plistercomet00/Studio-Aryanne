@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Menu,
   X,
+  MapPin,
 } from "lucide-react";
 import heroBrows from "@/assets/hero-brows.jpg";
 import aryannePortrait from "@/assets/aryanne-portrait.jpg";
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/")({
 
 const WHATSAPP_URL = "https://wa.me/5581985605529";
 const INSTAGRAM_URL = "https://www.instagram.com/studio.aryanne/";
+const GOOGLE_REVIEW_URL = "https://maps.app.goo.gl/S9JECEXJKzLUUDuS9";
 
 // ---------------------------------------------------------------------------
 // Hook: scroll reveal com stagger opcional
@@ -797,6 +799,24 @@ function Footer() {
           >
             <Instagram size={18} />
           </a>
+          <div className="mt-6">
+            <h4 className="font-display text-lg text-white">Avalie no Google</h4>
+            <a
+              href={GOOGLE_REVIEW_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20
+                px-4 py-2 text-sm text-white/80 transition-all duration-300
+                hover:border-gold hover:text-gold"
+            >
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={12} fill="currentColor" className="text-gold" strokeWidth={0} />
+                ))}
+              </div>
+              Deixar avaliação
+            </a>
+          </div>
         </div>
       </div>
 
