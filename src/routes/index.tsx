@@ -393,7 +393,7 @@ function Credibility() {
 }
 
 // ---------------------------------------------------------------------------
-// Modal de Galeria
+// Modal de Galeria — carrossel com peek lateral
 // ---------------------------------------------------------------------------
 function GalleryModal({
   title,
@@ -423,17 +423,20 @@ function GalleryModal({
   const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length);
   const next = () => setCurrent((c) => (c + 1) % images.length);
 
+  const getPeekIndex = (offset: number) =>
+    (current + offset + images.length) % images.length;
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-[90vh] w-full max-w-sm flex-col items-center"
+        className="flex w-full max-w-2xl flex-col items-center px-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="mb-4 flex w-full items-center justify-between px-2">
+        <div className="mb-5 flex w-full items-center justify-between">
           <span className="font-display text-xl text-white">{title}</span>
           <button
             onClick={onClose}
@@ -443,53 +446,83 @@ function GalleryModal({
           </button>
         </div>
 
-        {/* Imagem */}
-        <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: "9/16" }}>
-          {images.length > 0 ? (
-            <img
-              src={images[current]}
-              alt={`${title} - foto ${current + 1}`}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-sage-light">
-              <div className="text-center">
-                <Images size={40} className="mx-auto text-primary/40" strokeWidth={1.5} />
-                <p className="mt-3 text-sm text-muted-foreground">Fotos em breve</p>
-              </div>
-            </div>
-          )}
+        {/* Carrossel com peek */}
+        {images.length > 0 ? (
+          <div className="flex w-full items-center justify-center gap-3">
 
-          {/* Navegação */}
-          {images.length > 1 && (
-            <>
+            {/* Peek esquerda */}
+            {images.length > 1 && (
               <button
                 onClick={prev}
-                className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center
-                  rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                className="relative flex-shrink-0 cursor-pointer overflow-hidden rounded-xl"
+                style={{ width: "18%", aspectRatio: "9/16" }}
               >
-                <ChevronLeft size={18} />
+                <img
+                  src={images[getPeekIndex(-1)]}
+                  alt="anterior"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/55" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <ChevronLeft size={20} className="text-white/70" />
+                </div>
               </button>
+            )}
+
+            {/* Foto central */}
+            <div
+              className="relative flex-shrink-0 overflow-hidden rounded-2xl shadow-2xl"
+              style={{ width: images.length > 1 ? "60%" : "60%", aspectRatio: "9/16" }}
+            >
+              <img
+                key={current}
+                src={images[current]}
+                alt={`${title} - foto ${current + 1}`}
+                className="h-full w-full object-cover"
+                style={{ animation: "fadeInScale 0.25s ease-out" }}
+              />
+            </div>
+
+            {/* Peek direita */}
+            {images.length > 1 && (
               <button
                 onClick={next}
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center
-                  rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                className="relative flex-shrink-0 cursor-pointer overflow-hidden rounded-xl"
+                style={{ width: "18%", aspectRatio: "9/16" }}
               >
-                <ChevronRight size={18} />
+                <img
+                  src={images[getPeekIndex(1)]}
+                  alt="próxima"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/55" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <ChevronRight size={20} className="text-white/70" />
+                </div>
               </button>
-            </>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <div
+            className="flex items-center justify-center rounded-2xl bg-sage-light"
+            style={{ width: "60%", aspectRatio: "9/16" }}
+          >
+            <div className="text-center">
+              <Images size={40} className="mx-auto text-primary/40" strokeWidth={1.5} />
+              <p className="mt-3 text-sm text-muted-foreground">Fotos em breve</p>
+            </div>
+          </div>
+        )}
 
         {/* Indicadores */}
         {images.length > 1 && (
-          <div className="mt-4 flex gap-1.5">
+          <div className="mt-5 flex gap-1.5">
             {images.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === current ? "w-6 bg-gold" : "w-1.5 bg-white/40"
+                  i === current ? "w-6 bg-gold" : "w-1.5 bg-white/30"
                 }`}
               />
             ))}
@@ -497,12 +530,17 @@ function GalleryModal({
         )}
 
         {/* Contador */}
-        {images.length > 1 && (
-          <p className="mt-2 text-xs text-white/50">
-            {current + 1} / {images.length}
-          </p>
-        )}
+        <p className="mt-2 text-xs text-white/40">
+          {current + 1} / {images.length}
+        </p>
       </div>
+
+      <style>{`
+        @keyframes fadeInScale {
+          from { opacity: 0.6; transform: scale(0.97); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     </div>
   );
 }
