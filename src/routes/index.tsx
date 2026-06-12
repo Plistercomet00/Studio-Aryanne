@@ -440,9 +440,10 @@ function GalleryModal({
           <span className="font-display text-xl text-white">{title}</span>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white 
+              hover:bg-white/35 transition-all duration-200 hover:scale-110 border border-white/20"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
