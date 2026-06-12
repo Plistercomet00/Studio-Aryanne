@@ -517,7 +517,20 @@ function Services() {
   // Fotos por serviço — serão preenchidas quando as imagens forem adicionadas
   const serviceImages: Record<string, string[]> = {
     "Nature Brows": [],
-    "Brow Lamination": [],
+    "Brow Lamination": [
+      new URL("../assets/gallery-brow-lamination-1.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-2.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-3.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-4.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-5.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-6.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-7.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-8.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-9.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-10.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-11.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-brow-lamination-12.jpeg", import.meta.url).href,
+    ],
     "Lash Lifting": [],
     "Design & Henna": [],
     "Limpeza de Pele": [],
