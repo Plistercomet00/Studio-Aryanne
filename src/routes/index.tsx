@@ -573,7 +573,14 @@ function Services() {
       new URL("../assets/gallery-brow-lamination-11.jpeg", import.meta.url).href,
       new URL("../assets/gallery-brow-lamination-12.jpeg", import.meta.url).href,
     ],
-    "Lash Lifting": [],
+    "Lash Lifting": [
+      new URL("../assets/gallery-lash-lifting-1.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-lash-lifting-2.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-lash-lifting-3.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-lash-lifting-4.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-lash-lifting-5.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-lash-lifting-6.jpeg", import.meta.url).href,
+    ],
     "Design & Henna": [
       new URL("../assets/gallery-design-henna-1.jpeg", import.meta.url).href,
       new URL("../assets/gallery-design-henna-2.jpeg", import.meta.url).href,
