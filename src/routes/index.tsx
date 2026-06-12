@@ -599,7 +599,20 @@ function Services() {
       new URL("../assets/gallery-design-henna-15.jpeg", import.meta.url).href,
     ],
     "Limpeza de Pele": [],
-    "Nature Lips": [],
+    "Nature Lips": [
+      new URL("../assets/gallery-nature-lips-1.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-2.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-3.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-4.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-5.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-6.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-7.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-8.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-9.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-10.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-11.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-nature-lips-12.jpeg", import.meta.url).href,
+    ],
   };
 
   const services = [
