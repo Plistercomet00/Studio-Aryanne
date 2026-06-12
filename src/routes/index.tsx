@@ -586,21 +586,19 @@ function Services() {
             {services.map((s, i) => (
               <article
                 key={s.title}
-                className={`group relative rounded-2xl border border-border bg-background p-8
+                onClick={() => setActiveService(s.title)}
+                className={`group relative rounded-2xl border border-border bg-background p-8 cursor-pointer
                   transition-all duration-500 hover:-translate-y-1.5 hover:border-gold hover:shadow-lg
                   ${fadeUp} ${visible ? shown : hidden}`}
                 style={{ transitionDelay: visible ? `${i * 80}ms` : "0ms" }}
               >
                 {/* Ícone de galeria — canto superior direito */}
-                <button
-                  onClick={() => setActiveService(s.title)}
-                  className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full
+                <div className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full
                     bg-sage-light text-primary/40 transition-all duration-300
-                    hover:bg-gold/15 hover:text-gold hover:scale-110"
-                  title={`Ver fotos de ${s.title}`}
+                    group-hover:bg-gold/15 group-hover:text-gold group-hover:scale-110"
                 >
                   <Images size={15} strokeWidth={1.5} />
-                </button>
+                </div>
 
                 <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full
                   bg-sage-light text-primary transition-all duration-300
