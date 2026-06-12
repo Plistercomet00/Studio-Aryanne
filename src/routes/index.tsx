@@ -464,6 +464,8 @@ function GalleryModal({
                 <img
                   src={images[getPeekIndex(-1)]}
                   alt="anterior"
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/55" />
@@ -482,6 +484,8 @@ function GalleryModal({
                 key={current}
                 src={images[current]}
                 alt={`${title} - foto ${current + 1}`}
+                loading="eager"
+                decoding="async"
                 className="h-full w-full object-cover"
                 style={{ animation: "fadeInScale 0.25s ease-out" }}
               />
@@ -497,6 +501,8 @@ function GalleryModal({
                 <img
                   src={images[getPeekIndex(1)]}
                   alt="próxima"
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/55" />
