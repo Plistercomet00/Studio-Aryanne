@@ -15,6 +15,9 @@ import {
   X,
   MapPin,
   Smile,
+  Images,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import heroBrows from "@/assets/hero-brows.jpg";
 import aryannePortrait from "@/assets/aryanne-portrait.jpg";
@@ -390,10 +393,136 @@ function Credibility() {
 }
 
 // ---------------------------------------------------------------------------
+// Modal de Galeria
+// ---------------------------------------------------------------------------
+function GalleryModal({
+  title,
+  images,
+  onClose,
+}: {
+  title: string;
+  images: string[];
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") setCurrent((c) => (c + 1) % images.length);
+      if (e.key === "ArrowLeft") setCurrent((c) => (c - 1 + images.length) % images.length);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [images.length, onClose]);
+
+  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length);
+  const next = () => setCurrent((c) => (c + 1) % images.length);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex max-h-[90vh] w-full max-w-sm flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="mb-4 flex w-full items-center justify-between px-2">
+          <span className="font-display text-xl text-white">{title}</span>
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Imagem */}
+        <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: "9/16" }}>
+          {images.length > 0 ? (
+            <img
+              src={images[current]}
+              alt={`${title} - foto ${current + 1}`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-sage-light">
+              <div className="text-center">
+                <Images size={40} className="mx-auto text-primary/40" strokeWidth={1.5} />
+                <p className="mt-3 text-sm text-muted-foreground">Fotos em breve</p>
+              </div>
+            </div>
+          )}
+
+          {/* Navegação */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={prev}
+                className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center
+                  rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                onClick={next}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center
+                  rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Indicadores */}
+        {images.length > 1 && (
+          <div className="mt-4 flex gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === current ? "w-6 bg-gold" : "w-1.5 bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Contador */}
+        {images.length > 1 && (
+          <p className="mt-2 text-xs text-white/50">
+            {current + 1} / {images.length}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Serviços — cards com stagger e micro-interação no ícone
 // ---------------------------------------------------------------------------
 function Services() {
   const [ref, visible] = useReveal<HTMLElement>();
+  const [activeService, setActiveService] = useState<string | null>(null);
+
+  // Fotos por serviço — serão preenchidas quando as imagens forem adicionadas
+  const serviceImages: Record<string, string[]> = {
+    "Nature Brows": [],
+    "Brow Lamination": [],
+    "Lash Lifting": [],
+    "Design & Henna": [],
+    "Limpeza de Pele": [],
+    "Nature Lips": [],
+  };
 
   const services = [
     {
@@ -429,60 +558,65 @@ function Services() {
   ];
 
   return (
-    <section id="servicos" ref={ref} className="py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Cabeçalho */}
-        <div
-          className={`mx-auto max-w-2xl text-center ${fadeUp} ${
-            visible ? shown : hidden
-          }`}
-        >
-          <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-            O que oferecemos
-          </span>
-          <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
-            Nossos <em className="italic text-primary-dark">Serviços</em>
-          </h2>
-          <p className="mt-5 text-base text-muted-foreground">
-            Técnicas exclusivas pensadas para o seu tipo de rosto e estilo.
-          </p>
-          <div
-            className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${
-              visible ? "w-16" : "w-0"
-            }`}
-          />
-        </div>
+    <>
+      {activeService && (
+        <GalleryModal
+          title={activeService}
+          images={serviceImages[activeService] ?? []}
+          onClose={() => setActiveService(null)}
+        />
+      )}
 
-        {/* Grid com stagger */}
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((s, i) => (
-            <article
-              key={s.title}
-              className={`group rounded-2xl border border-border bg-background p-8
-                transition-all duration-500 hover:-translate-y-1.5 hover:border-gold hover:shadow-lg
-                ${fadeUp} ${visible ? shown : hidden}`}
-              style={{ transitionDelay: visible ? `${i * 80}ms` : "0ms" }}
-            >
-              <div
-                className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full
+      <section id="servicos" ref={ref} className="py-24 lg:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          {/* Cabeçalho */}
+          <div className={`mx-auto max-w-2xl text-center ${fadeUp} ${visible ? shown : hidden}`}>
+            <span className="text-xs font-medium uppercase tracking-[0.28em] text-primary">O que oferecemos</span>
+            <h2 className="mt-4 font-display text-4xl text-foreground sm:text-5xl">
+              Nossos <em className="italic text-primary-dark">Serviços</em>
+            </h2>
+            <p className="mt-5 text-base text-muted-foreground">
+              Técnicas exclusivas pensadas para o seu tipo de rosto e estilo.
+            </p>
+            <div className={`mx-auto mt-6 h-px bg-gold transition-all duration-700 delay-300 ${visible ? "w-16" : "w-0"}`} />
+          </div>
+
+          {/* Grid com stagger */}
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((s, i) => (
+              <article
+                key={s.title}
+                className={`group relative rounded-2xl border border-border bg-background p-8
+                  transition-all duration-500 hover:-translate-y-1.5 hover:border-gold hover:shadow-lg
+                  ${fadeUp} ${visible ? shown : hidden}`}
+                style={{ transitionDelay: visible ? `${i * 80}ms` : "0ms" }}
+              >
+                {/* Ícone de galeria — canto superior direito */}
+                <button
+                  onClick={() => setActiveService(s.title)}
+                  className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full
+                    bg-sage-light text-primary/40 transition-all duration-300
+                    hover:bg-gold/15 hover:text-gold hover:scale-110"
+                  title={`Ver fotos de ${s.title}`}
+                >
+                  <Images size={15} strokeWidth={1.5} />
+                </button>
+
+                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full
                   bg-sage-light text-primary transition-all duration-300
                   group-hover:bg-gold/15 group-hover:text-gold group-hover:-translate-y-1"
-              >
-                <s.icon size={22} strokeWidth={1.5} />
-              </div>
-              <h3 className="font-display text-2xl text-foreground">{s.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {s.desc}
-              </p>
-              {/* Linha dourada no rodapé do card, expande no hover */}
-              <div
-                className="mt-6 h-px w-0 bg-gold transition-all duration-500 group-hover:w-12"
-              />
-            </article>
-          ))}
+                >
+                  <s.icon size={22} strokeWidth={1.5} />
+                </div>
+                <h3 className="font-display text-2xl text-foreground">{s.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+                <div className="mt-6 h-px w-0 bg-gold transition-all duration-500 group-hover:w-12" />
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
