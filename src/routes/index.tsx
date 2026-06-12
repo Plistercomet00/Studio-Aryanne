@@ -1075,9 +1075,9 @@ function Index() {
       <Navbar />
       <Hero />
       <Credibility />
+      <Portfolio />
       <Services />
       <About />
-      <Portfolio />
       <Testimonials />
       <FinalCTA />
       <Footer />
