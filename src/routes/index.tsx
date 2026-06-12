@@ -230,6 +230,10 @@ function Hero() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
+    // Desativa parallax em telas menores que 1024px (mobile/tablet)
+    const isMobile = window.innerWidth < 1024;
+    if (isMobile) return;
+
     const onScroll = () => {
       if (!imgRef.current) return;
       const y = window.scrollY;
