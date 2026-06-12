@@ -431,20 +431,23 @@ function GalleryModal({
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm"
       onClick={onClose}
     >
+      {/* Botão X fixo no canto superior direito da tela */}
+      <button
+        onClick={onClose}
+        className="fixed right-5 top-5 z-[101] flex h-10 w-10 items-center justify-center 
+          rounded-full bg-white/25 text-white border border-white/40
+          hover:bg-white/40 transition-all duration-200 hover:scale-110"
+      >
+        <X size={20} />
+      </button>
+
       <div
         className="flex w-full max-w-2xl flex-col items-center px-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="mb-5 flex w-full items-center justify-between">
+        {/* Header — só título */}
+        <div className="mb-5 flex w-full items-center justify-center">
           <span className="font-display text-xl text-white">{title}</span>
-          <button
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white 
-              hover:bg-white/35 transition-all duration-200 hover:scale-110 border border-white/20"
-          >
-            <X size={18} />
-          </button>
         </div>
 
         {/* Carrossel com peek */}
@@ -571,7 +574,23 @@ function Services() {
       new URL("../assets/gallery-brow-lamination-12.jpeg", import.meta.url).href,
     ],
     "Lash Lifting": [],
-    "Design & Henna": [],
+    "Design & Henna": [
+      new URL("../assets/gallery-design-henna-1.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-2.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-3.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-4.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-5.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-6.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-7.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-8.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-9.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-10.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-11.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-12.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-13.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-14.jpeg", import.meta.url).href,
+      new URL("../assets/gallery-design-henna-15.jpeg", import.meta.url).href,
+    ],
     "Limpeza de Pele": [],
     "Nature Lips": [],
   };
